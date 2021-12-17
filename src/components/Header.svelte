@@ -2,7 +2,7 @@
     import NavLink from './NavLink.svelte';
     import WSBLogo from '../assets/images/wsb-logo.jpg';
     import TripleStateSwitch from './TripleStateSwitch.svelte';
-    import { supportsDarkMode, changeTheme, getCurrentTheme, Theme } from '../lib/theme';
+    import { supportsDarkMode, changeTheme, getCurrentTheme, Theme } from '../theme';
 
     let defaultTheme = getCurrentTheme();
 
@@ -63,11 +63,6 @@
                     </div>
                 </NavLink>
             </li>
-            <li class="text-2xl c-primary cursor-pointer">
-                <NavLink to="/configs">
-                    <div style="display: flex; align-items: center;">Saved Configs</div>
-                </NavLink>
-            </li>
         </ul>
     </nav>
 </header>
@@ -102,7 +97,7 @@
         margin: 0;
         padding: 0;
         display: flex;
-        justify-content: space-evenly;
+        justify-content: flex-start;
     }
 
     .main-header__nav ul li > a.back-btn.active div span {

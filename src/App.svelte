@@ -4,10 +4,9 @@
     import { beforeUpdate, onMount, onDestroy } from 'svelte';
     import Header from './components/Header.svelte';
     import ConfigEditorScreen from './screens/ConfigEditor.svelte';
-    import ConfigsScreen from './screens/Configs.svelte';
     import MainScreen from './screens/Main.svelte';
     import { Router, Route } from 'svelte-routing';
-    import { darkModeMQ, changeTheme, getCurrentTheme } from './lib/theme';
+    import { darkModeMQ, changeTheme, getCurrentTheme } from './theme';
 
     export let url = '';
 
@@ -40,7 +39,7 @@
                 <MainScreen />
             </section>
         </Route>
-        <Route path="/edit" a={1}>
+        <Route path="/edit">
             <section class="route">
                 <ConfigEditorScreen id="" />
             </section>
@@ -48,11 +47,6 @@
         <Route path="/edit/:id" let:params>
             <section class="route">
                 <ConfigEditorScreen id={params.id} />
-            </section>
-        </Route>
-        <Route path="/configs">
-            <section class="route">
-                <ConfigsScreen />
             </section>
         </Route>
     </main>
@@ -87,10 +81,5 @@
         .router .route {
             animation: unset;
         }
-    }
-
-    :global(a) {
-        text-decoration: none;
-        color: initial;
     }
 </style>
