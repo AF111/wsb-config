@@ -19,8 +19,8 @@
     "vite": "^2.6.0"
   },
   "dependencies": {
+    "jstoxml": "^2.2.6",
     "modern-normalize": "^1.1.0",
-    "nanoid": "^3.1.30",
     "svelte-routing": "^1.6.0"
   }
 }
