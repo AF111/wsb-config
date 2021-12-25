@@ -41,12 +41,7 @@
         </Route>
         <Route path="/edit">
             <section class="route">
-                <ConfigEditorScreen id="" />
-            </section>
-        </Route>
-        <Route path="/edit/:id" let:params>
-            <section class="route">
-                <ConfigEditorScreen id={params.id} />
+                <ConfigEditorScreen />
             </section>
         </Route>
     </main>
