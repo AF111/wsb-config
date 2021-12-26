@@ -1,5 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import AddFileImg from '../assets/images/add-files.svg';
+    import EditFileImg from '../assets/images/edit-files.svg';
 
     import { Link, navigate } from 'svelte-routing';
 
@@ -32,7 +34,7 @@
 
 <div class="main-screen">
     <div class="main-screen__card" on:click={openFilePicker}>
-        <img src="./src/assets/images/add-files.svg" alt="add files" width="179" height="151" srcset="" />
+        <img src={AddFileImg} alt="edit existing config" width="179" height="151" srcset="" />
         <p class="text-2xl">Upload & edit config file</p>
         <input
             bind:this={importConfigInput}
@@ -46,7 +48,7 @@
 
     <Link to="/edit">
         <div class="main-screen__card">
-            <img src="./src/assets/images/edit-files.svg" alt="add files" width="179" height="151" srcset="" />
+            <img src={EditFileImg} alt="create new config" width="179" height="151" srcset="" />
             <p class="text-2xl">Create a new config file</p>
         </div>
     </Link>
