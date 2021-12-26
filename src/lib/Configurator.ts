@@ -264,7 +264,7 @@ export const createWSBConfig = (): ICreateWSBConfig => {
                 return this;
             }
 
-            config.MemoryInMB = mBytes;
+            config.MemoryInMB = Math.abs(mBytes);
             emitChange();
             return this;
         },
