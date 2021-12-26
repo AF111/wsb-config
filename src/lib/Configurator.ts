@@ -86,17 +86,18 @@ interface ICreateWSBConfig {
 const WIN_PATH_REGEX = /(^[a-zA-Z]:|\\)\\(((?![<>:"\/\\|?*]).)+((?<![ .])\\)?)*$/i;
 export const isValidWinAbsPath = (path: string) => WIN_PATH_REGEX.test(path);
 
+export const toggleOptions = [
+    'AudioInput',
+    'VideoInput',
+    'ClipboardRedirection',
+    'vGpu',
+    'ProtectedClient',
+    'PrinterRedirection',
+    'Networking',
+];
+
 export const validateConfig = (config: WSBConfiguration): WSBConfiguration => {
     const configKeys = Object.keys(config);
-    const toggleableKeys = [
-        'AudioInput',
-        'VideoInput',
-        'ClipboardRedirection',
-        'vGpu',
-        'ProtectedClient',
-        'PrinterRedirection',
-        'Networking',
-    ];
 
     for (const key of configKeys) {
         const value = config[key];
@@ -139,7 +140,7 @@ export const validateConfig = (config: WSBConfiguration): WSBConfiguration => {
                 break;
 
             default:
-                if (!toggleableKeys.includes(key)) {
+                if (!toggleOptions.includes(key)) {
                     throw new TypeError(`unknown config property "${key}"`);
                 }
                 if (typeof value !== 'boolean') {
