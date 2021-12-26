@@ -93,20 +93,21 @@
                 let num = +value;
 
                 if (Number.isNaN(num)) {
-                    memoryErrMsgEl.textContent = 'MemoryInMB should be a number';
-                    console.error('MemoryInMB should be a number');
+                    memoryErrMsgEl.textContent = 'Memory should be a number';
+                    console.error('Memory should be a number');
                     return;
                 }
 
-                num = Math.abs(num);
-
-                if (num < 1000) {
-                    memoryErrMsgEl.textContent = 'MemoryInMB should be equal to or greater than 1000';
-                    console.error('MemoryInMB should be equal to or greater than 1000');
-                    return;
+                /// 512??
+                if (num < 512) {
+                    memoryErrMsgEl.textContent =
+                        "INFO: Memory will be automatically increased to the required minimum if it's insufficient to boot the sandbox.";
+                    console.info(
+                        "INFO: Memory will be automatically increased to the required minimum if it's insufficient to boot the sandbox."
+                    );
+                } else {
+                    memoryErrMsgEl.textContent = '';
                 }
-
-                memoryErrMsgEl.textContent = '';
 
                 config.setMemoryBytes(num);
                 return;
@@ -141,7 +142,7 @@
             delete exportObj.LogonCommand;
         }
 
-        if (exportObj.MemoryInMB && exportObj.MemoryInMB < 1000) {
+        if ('MemoryInMB' in exportObj && exportObj.MemoryInMB < 1) {
             delete exportObj.MemoryInMB;
         }
 
@@ -445,11 +446,11 @@
                     style="width: 100%; margin-top: 1rem;"
                     name="MemoryInMB"
                     type="number"
-                    min="1000"
+                    min="0"
                     value={configValues.MemoryInMB}
                 />
 
-                <p bind:this={memoryErrMsgEl} class="err-msg" />
+                <p bind:this={memoryErrMsgEl} class="info-msg" />
             {/if}
         </div>
 
@@ -512,8 +513,8 @@
         margin-left: 10px;
     }
 
-    .err-msg {
-        color: var(--c-danger);
+    .info-msg {
+        color: var(--c-primary);
         font-weight: 500;
     }
 </style>
