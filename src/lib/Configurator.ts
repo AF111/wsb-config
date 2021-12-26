@@ -174,8 +174,8 @@ const xmlParser = (cfg: string) => {
     let memoryInMB = 0;
     let _memoryInMB = +xmlDoc.querySelector('MemoryInMB')?.textContent;
 
-    if (!Number.isNaN(_memoryInMB) && _memoryInMB > 1000) {
-        memoryInMB = Math.abs(_memoryInMB);
+    if (!Number.isNaN(_memoryInMB) && _memoryInMB > 0) {
+        memoryInMB = _memoryInMB;
     }
 
     return {
