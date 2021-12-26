@@ -77,28 +77,33 @@ interface ICreateWSBConfig {
     setLogonCommand(command: string): ICreateWSBConfig;
     setMemoryBytes(mBytes: number): ICreateWSBConfig;
     addMappedFolder(folder: MappedFolder): ICreateWSBConfig;
-    removeMappedFolder(id: number): ICreateWSBConfig;
+    removeMappedFolder(idx: number): ICreateWSBConfig;
     removeAllMappedFolders(): void;
     onChange(cb: IonChangeCallback): void;
     getAll(): WSBConfiguration;
 }
 
+const WIN_PATH_REGEX = /(^[a-zA-Z]:|\\)\\(((?![<>:"\/\\|?*]).)+((?<![ .])\\)?)*$/i;
+export const isValidWinAbsPath = (path: string) => WIN_PATH_REGEX.test(path);
+
 export const validateConfig = (config: WSBConfiguration): WSBConfiguration => {
     const configKeys = Object.keys(config);
+    const toggleableKeys = [
+        'AudioInput',
+        'VideoInput',
+        'ClipboardRedirection',
+        'vGpu',
+        'ProtectedClient',
+        'PrinterRedirection',
+        'Networking',
+    ];
 
     for (const key of configKeys) {
         const value = config[key];
 
         switch (key) {
+            // cannot set non number value using setMemoryBytes method, skip
             case 'MemoryInMB':
-                if (typeof value !== 'number') {
-                    throw new Error('"MemoryInMB" must be a number');
-                }
-
-                if (value < 1000) {
-                    console.info('Ignoring value in MemoryInMB, it must be greater than or equal to 1000');
-                    configKeys[key] = 0;
-                }
                 break;
 
             case 'MappedFolders':
@@ -119,16 +124,24 @@ export const validateConfig = (config: WSBConfiguration): WSBConfiguration => {
                 break;
 
             case 'LogonCommand':
-                if (!('Command' in value)) {
+                if (typeof value !== 'object') {
                     throw new Error('LogonCommand must be an object');
+                }
+
+                if (Object.keys(value).length > 1) {
+                    throw new Error('"LogonCommand" object must only contain a "Command" property');
                 }
 
                 if (typeof value.Command !== 'string') {
                     throw new Error('"LogonCommand.Command" must be a string');
                 }
+
                 break;
 
             default:
+                if (!toggleableKeys.includes(key)) {
+                    throw new TypeError(`unknown config property "${key}"`);
+                }
                 if (typeof value !== 'boolean') {
                     throw new TypeError(`${key} must be a boolean`);
                 }
@@ -175,7 +188,7 @@ const xmlParser = (cfg: string) => {
         Networking: tryAsBoolValue('Networking') ?? true,
         MemoryInMB: memoryInMB,
         MappedFolders: getMappedFolders(),
-        LogonCommand: { Command: xmlDoc.querySelector('LogonCommand')?.textContent ?? '' },
+        LogonCommand: { Command: xmlDoc.querySelector('LogonCommand')?.textContent?.trim() ?? '' },
     };
 };
 
@@ -199,7 +212,6 @@ export const createWSBConfig = (): ICreateWSBConfig => {
         if (!onChangeCB) return;
 
         console.log('emit(config:change)', config);
-
         onChangeCB(config);
     };
 
@@ -246,12 +258,31 @@ export const createWSBConfig = (): ICreateWSBConfig => {
             return this;
         },
         setMemoryBytes(mBytes: number) {
+            mBytes = +mBytes;
+
+            if (Number.isNaN(mBytes)) {
+                return this;
+            }
+
             config.MemoryInMB = mBytes;
             emitChange();
             return this;
         },
         addMappedFolder(folder: MappedFolder) {
-            config.MappedFolders.push({ ...folder });
+            if (typeof folder.HostFolder !== 'string' && typeof folder.SandboxFolder !== 'string') {
+                throw new TypeError('Folder mappings for both the Host and Sandbox must be a strings');
+            }
+
+            if (typeof folder.ReadOnly !== 'boolean') {
+                throw new TypeError('ReadOnly must be a boolean');
+            }
+
+            config.MappedFolders.push({
+                HostFolder: folder.HostFolder,
+                SandboxFolder: folder.SandboxFolder,
+                ReadOnly: folder.ReadOnly,
+            });
+
             emitChange();
 
             return this;
@@ -270,7 +301,3 @@ export const createWSBConfig = (): ICreateWSBConfig => {
         },
     };
 };
-
-const WIN_PATH_REGEX = /(^[a-zA-Z]:|\\)\\(((?![<>:"\/\\|?*]).)+((?<![ .])\\)?)*$/i;
-
-export const isValidWinAbsPath = (path: string) => WIN_PATH_REGEX.test(path);
