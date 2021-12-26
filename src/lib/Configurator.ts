@@ -158,11 +158,11 @@ const xmlParser = (cfg: string) => {
     const xmlDoc = parser.parseFromString(cfg, 'text/xml');
 
     const tryAsBoolValue = (selector: string, doc: Document | Element = xmlDoc): boolean | undefined => {
-        const value = doc.querySelector(selector)?.textContent;
+        const value = doc.querySelector(selector)?.textContent?.trim();
 
-        if (value !== 'true' && value !== 'false') return undefined;
+        if (value !== 'Enable' && value !== 'Disable') return undefined;
 
-        return value === 'true' ? true : false;
+        return value === 'Enable' ? true : false;
     };
 
     const getMappedFolders = (): MappedFolder[] =>

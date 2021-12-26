@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { ToggleOptions, validateConfig, WSBConfiguration } from '../lib/Configurator';
+    import { toggleOptions, ToggleOptions, validateConfig, WSBConfiguration } from '../lib/Configurator';
 
     import { onMount } from 'svelte';
     import { createWSBConfig } from '../lib/Configurator';
@@ -154,6 +154,11 @@
             if (folders.length) {
                 (exportObj as any).MappedFolders = folders;
             }
+        }
+
+        for (const opt of toggleOptions) {
+            const value = exportObj[opt];
+            exportObj[opt] = value ? 'Enable' : 'Disable';
         }
 
         return exportObj;
